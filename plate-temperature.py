@@ -110,8 +110,6 @@ print('Incident solar flux absorbed in absorber plate in W/m^2 -  ', S)
 
 
 
-Ul1 = 0 # W/m^2-K
-Ul2 = 4
 
 def Pr(T):
   Pr = 0.7418 - 0.0001373*T #Prandtl number
@@ -161,7 +159,7 @@ L3 = M * L + db # height in metres
 Ap = L1 * L2 # Area of absorber plate in m^2
 ds = float(input('Enter thickness of insultor at side in metres: ')) # metres
 Us = ((L1 + L2) * L3 * Ki) / (L1 * L2 * ds) # W/m^2-K
-
+L = float(input('Enter length of spacing between covers in metres: ')) # metres
 
 N = float(input('Enter no. of tubes in collector: '))
 Do = float(input('Enter outer diameter of tube in metres: ')) # metres
@@ -171,13 +169,17 @@ dp = float(input('Enter thickness of absorber plate in metres: ')) # metres
 hf = float(input('Enter heat transfer coefficient between fluid and tube in W/m^2-K: ')) # W/m^2-K
 W = L2 / N # pitch of absorber plate
 
+
+Ul1 = 0 # W/m^2-K
+Ul2 = 4
+
 while np.abs(Ul1 - Ul2) > 0.05:
   m = (Ul2/(Kp*dp))**0.5
   phy = (tanh(m * (W - Do) / 2)) / (m * (W - Do) / 2)
   
   fdash = ((W/(Do + phy * (W - Do))) + W*Ul2/(pi * Di * hf))**(-1)
   
-  FR = flowrate * Cp * (1 - exp(-1 * fdash * Ul * Ap / (flowrate * Cp))) / (Ul2 * Ap)
+  FR = flowrate * Cp * (1 - exp(-1 * fdash * Ul2 * Ap / (flowrate * Cp))) / (Ul2 * Ap)
   
   Qu = FR * Ap * (S - Ul2 * (Tfi - Ta))
   Ql = S*Ap - Qu
