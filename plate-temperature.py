@@ -138,12 +138,7 @@ def NuL(effRaL):
     NuL = 0.157*(effRaL**0.285)
   return NuL
 
-flowrate = float(input('Enter flow rate of fluid in kg/s: ')) # fluid flow rate in kg/s
-wind = float(input('Enter wind speed in m/s: '))
 
-
-Tfi = float(input('Enter inlet temperature of fluid in kelvin: '))
-Ta = float(input('Enter surrounding temperature in kelvin: '))
 
 
 # Bottom loss coefficient calculation
@@ -155,20 +150,28 @@ Ub = Ki / db # W/m^2-K
 # Side Loss Coefficient calculation
 L1 = float(input("Enter length of absorber plate in metres: ")) # length in metres
 L2 = float(input("Enter breadth of absorber plate in metres: ")) # breadth in metres
+L = float(input('Enter length of spacing between covers in metres: ')) # metres
 L3 = M * L + db # height in metres
 Ap = L1 * L2 # Area of absorber plate in m^2
 ds = float(input('Enter thickness of insultor at side in metres: ')) # metres
 Us = ((L1 + L2) * L3 * Ki) / (L1 * L2 * ds) # W/m^2-K
-L = float(input('Enter length of spacing between covers in metres: ')) # metres
 
+Ec = float(input('Enter emissivity of covers for long wavelength radiation: '))
+Ep = float(input('Enter emmisivity of absorber plate for long wavelength radiation: '))
+Kp = float(input('Enter thermal conductivity of absorber plate in W/m-K: ')) # W/m-K
+dp = float(input('Enter thickness of absorber plate in metres: ')) # metres
+hf = float(input('Enter heat transfer coefficient between fluid and tube in W/m^2-K: '))
+flowrate = float(input('Enter flow rate of fluid in kg/s: ')) # fluid flow rate in kg/s
+
+Tfi = float(input('Enter inlet temperature of fluid in kelvin: '))
+Ta = float(input('Enter surrounding temperature in kelvin: '))
 N = float(input('Enter no. of tubes in collector: '))
 Do = float(input('Enter outer diameter of tube in metres: ')) # metres
 Di = float(input('Enter inner diameter of tube in metres: ')) # metres
-Kp = float(input('Enter thermal conductivity of absorber plate in W/m-K: ')) # W/m-K
-dp = float(input('Enter thickness of absorber plate in metres: ')) # metres
-hf = float(input('Enter heat transfer coefficient between fluid and tube in W/m^2-K: ')) # W/m^2-K
 W = L2 / N # pitch of absorber plate
 
+wind = float(input('Enter wind speed in m/s: '))
+hw = 8.55 + 2.56 * wind
 
 Ul1 = 0 # W/m^2-K
 Ul2 = 4
@@ -188,7 +191,6 @@ while np.abs(Ul1 - Ul2) > 0.05:
   Tc = 307 # Kelvin
   hp = NuL(effRaL(Tp,Tc,beta,L))*k((Tp+Tc)/2)/L
   
-  hw = 8.55 + 2.56 * wind
   
   Qt1 = hp * (Tp - Tc) + sigma*(Tp**4 - Tc**4)/(1/Ec + 1/ Ep - 1)
   Qt2 = hw * (Tc - Ta) + sigma*Ec*(Tc**4 - (Ta - 6)**4)
@@ -201,7 +203,7 @@ while np.abs(Ul1 - Ul2) > 0.05:
 
 
 # Useful heat gain rate of collector
-Qu = FR * Ap * (S - Ul * (Tfi - Ta)) # Watt
+Qu = FR * Ap * (S - Ul2 * (Tfi - Ta)) # Watt
 print('Useful heat gain rate - ', Qu)
 
 # Outlet fluid temperature
