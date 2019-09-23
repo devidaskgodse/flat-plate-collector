@@ -69,40 +69,51 @@ M = float(input("Enter no. of transperant covers on the surface: ")) # No. of to
 dc = float(input('Enter thickness of one transperant cover in metres: '))
 theta1 = acos(costheta1) # Angle of incidence for beam radiation
 theta2 = asin(sin(theta1) / eta) # Angle of refraction for beam radiation
+print('Theta2:',theta2)
 K = 19 # Extinction coefficient for glass in per metre. #Generally 15 per metre.
 
 # Reflectivity of two components of polarization of beam radiation
 robI = (sin(theta2 - theta1))**2 / (sin(theta2 + theta1))**2 
+print('robI',robI)
 robII = (tan(theta2 - theta1))**2 / (tan(theta2 + theta1))**2
+print('robII',robII)
 # Transmitivity of two components of polarization
 TrbI = (1 - robI) / (1 + (2*M - 1) * robI)
+print('TrbI',TrbI)
 TrbII = (1 - robII) / (1 + (2*M - 1) * robII)
+print('TrbII',TrbII)
 Trb = (TrbI + TrbII) / 2 # Transmittivity considering only reflection and refraction
 
 Tab = exp(-1 * M * K * dc / cos(theta2)) # Transmittivity considering only absorption
-
+print('Tab',Tab)
 
 theta1 = d * 60 # Angle of incidence for diffuse radiation
 theta2 = asin(sin(theta1) / eta) # Angle of refraction for diffuse radiation
+print('Theta2:',theta2)
 # Reflectivity of two components of polarization of diffuse radiation
 rodI = (sin(theta2 - theta1))**2 / (sin(theta2 + theta1))**2 
+print('robI',robI)
 rodII = (tan(theta2 - theta1))**2 / (tan(theta2 + theta1))**2
+print('robII',robII)
 # Transmitivity of two components of polarization
 TrdI = (1 - rodI) / (1 + (2*M - 1) * rodI)
+print('TrdI',TrdI)
 TrdII = (1 - rodII) / (1 + (2*M - 1) * rodII)
+print('TrbII',TrbII)
 Trd = (TrdI + TrdII) / 2 # Transmittivity considering only reflection and refraction
 
 Tad = exp(-1 * M * K * dc / cos(theta2)) # Transmittivity considering only absorption
-
+print('Tad',Tad)
 
 rodee = Tad * (1 - Trd)
 
 alpha = float(input("Enter plate absorptivity for absorber plate: ")) # plate absorptivity
 # Transmittivity absorptivity product for beam radiation
 TAb = (Trb * Tab * alpha) / (1 - ((1-alpha) * rodee))
+print('TAb: ',TAb)
 # Transmittivity absorptivity product for diffuse radiation
 TAd = (Trd * Tad * alpha) / (1 - ((1-alpha) * rodee))
-
+print('TAd: ',TAd)
 
 # Incident solar flux absorbed in absorber plate
 S = Ib * Rb * TAb + (Id * Rd + Ig * Rr) * TAd
