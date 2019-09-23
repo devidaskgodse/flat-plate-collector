@@ -69,52 +69,43 @@ M = float(input("Enter no. of transperant covers on the surface: ")) # No. of to
 dc = float(input('Enter thickness of one transperant cover in metres: '))
 theta1 = acos(costheta1) # Angle of incidence for beam radiation
 theta2 = asin(sin(theta1) / eta) # Angle of refraction for beam radiation
-print('Theta2:',theta2)
+
 K = 19 # Extinction coefficient for glass in per metre. #Generally 15 per metre.
 
 # Reflectivity of two components of polarization of beam radiation
 robI = (sin(theta2 - theta1))**2 / (sin(theta2 + theta1))**2 
-print('robI',robI)
 robII = (tan(theta2 - theta1))**2 / (tan(theta2 + theta1))**2
-print('robII',robII)
+
 # Transmitivity of two components of polarization
 TrbI = (1 - robI) / (1 + (2*M - 1) * robI)
-print('TrbI',TrbI)
 TrbII = (1 - robII) / (1 + (2*M - 1) * robII)
-print('TrbII',TrbII)
+
 Trb = (TrbI + TrbII) / 2 # Transmittivity considering only reflection and refraction
-print('Trb',Trb)
 Tab = exp(-1 * M * K * dc / cos(theta2)) # Transmittivity considering only absorption
-print('Tab',Tab)
+
 
 theta1 = d * 60 # Angle of incidence for diffuse radiation
 theta2 = asin(sin(theta1) / eta) # Angle of refraction for diffuse radiation
-print('Theta2:',theta2)
+
 # Reflectivity of two components of polarization of diffuse radiation
 rodI = (sin(theta2 - theta1))**2 / (sin(theta2 + theta1))**2 
-print('rodI',rodI)
 rodII = (tan(theta2 - theta1))**2 / (tan(theta2 + theta1))**2
-print('rodII',rodII)
+
 # Transmitivity of two components of polarization
 TrdI = (1 - rodI) / (1 + (2*M - 1) * rodI)
-print('TrdI',TrdI)
 TrdII = (1 - rodII) / (1 + (2*M - 1) * rodII)
-print('TrdII',TrdII)
+
 Trd = (TrdI + TrdII) / 2 # Transmittivity considering only reflection and refraction
-print('Trd',Trd)
 Tad = exp(-1 * M * K * dc / cos(theta2)) # Transmittivity considering only absorption
-print('Tad',Tad)
 
 rodee = Tad * (1 - Trd)
-print('Rodee',rodee)
 
 alpha = float(input("Enter plate absorptivity for absorber plate: ")) # plate absorptivity
 # Transmittivity absorptivity product for beam radiation
 TAb = (Trb * Tab * alpha) / (1 - ((1-alpha) * rodee))
-print('TAb: ',TAb)
 # Transmittivity absorptivity product for diffuse radiation
 TAd = (Trd * Tad * alpha) / (1 - ((1-alpha) * rodee))
-print('TAd: ',TAd)
+
 
 # Incident solar flux absorbed in absorber plate
 S = Ib * Rb * TAb + (Id * Rd + Ig * Rr) * TAd
@@ -125,23 +116,19 @@ print('Incident solar flux absorbed in absorber plate in W/m^2 -  ', S)
 
 def Pr(T):
   Pr = 0.7418 - 0.0001373*T #Prandtl number
-  print('Pr',Pr)
   return Pr
 
 def v(T):
   v = (-17.2813 + 0.1092 * T)*10**(-6)
-  print('v',v)
   return v
 
 def k(T):
   k = 0.004245 + 0.0000742245*T # thermal conductivity
-  print('k',k)
   return k
 
 def effRaL(Tp,Tc,beta,L):
   mean = (Tp + Tc)/2
   RaL = 9.81 * (Tp - Tc)*Pr(mean)*L**3/(mean * v(mean)**2) # effective rayleigh number
-  print('RaL',RaL)
   return RaL*np.cos(beta)
 
 def NuL(effRaL):
@@ -153,7 +140,6 @@ def NuL(effRaL):
     NuL = 0.229*(effRaL**0.252)
   elif 9.23e4 < effRaL <= 1.0e6:
     NuL = 0.157*(effRaL**0.285)
-  print('NuL',NuL)
   return NuL
 
 
@@ -163,7 +149,6 @@ def NuL(effRaL):
 Ki = float(input("Enter thermal conductivity of insulator in W/m-K: ")) # W/m-K
 db = float(input("Enter Thickness of insulator at the bottom in m: ")) # in metres
 Ub = Ki / db # W/m^2-K
-print('Ub',Ub)
 
 # Side Loss Coefficient calculation
 L1 = float(input("Enter length of absorber plate in metres: ")) # length in metres
@@ -173,7 +158,6 @@ L3 = M * L + db # height in metres
 Ap = L1 * L2 # Area of absorber plate in m^2
 ds = float(input('Enter thickness of insultor at side in metres: ')) # metres
 Us = ((L1 + L2) * L3 * Ki) / (L1 * L2 * ds) # W/m^2-K
-print('Us',Us)
 
 Ec = float(input('Enter emissivity of covers for long wavelength radiation: '))
 Ep = float(input('Enter emmisivity of absorber plate for long wavelength radiation: '))
@@ -199,32 +183,25 @@ while np.abs(Ul1 - Ul2) > 0.05:
   phy = (tanh(m * (W - Do) / 2)) / (m * (W - Do) / 2)
   
   fdash = ((W/(Do + phy * (W - Do))) + W*Ul2/(pi * Di * hf))**(-1)
-  print('fdash',fdash)
   
   FR = flowrate * Cp * (1 - exp(-1 * fdash * Ul2 * Ap / (flowrate * Cp))) / (Ul2 * Ap)
-  print('FR',FR)
   
   Qu = FR * Ap * (S - Ul2 * (Tfi - Ta))
-  print('Qu',Qu)
   Ql = S*Ap - Qu
 
   Tp = (Ql/(Ul2*Ap)) + Ta
-  print('Tp',Tp)
   Tc = 307 # Kelvin
   hp = NuL(effRaL(Tp,Tc,beta,L))*k((Tp+Tc)/2)/L
-  print('hp',hp)
   
   Qt1 = hp * (Tp - Tc) + sigma*(Tp**4 - Tc**4)/(1/Ec + 1/ Ep - 1)
   Qt2 = hw * (Tc - Ta) + sigma*Ec*(Tc**4 - (Ta - 6)**4)
     
   Qt = (Qt1 + Qt2)/2
-  print('Qt',Qt)
   Ut = Qt / (Tp - Ta)  
-  print('Ut',Ut)
 
   Ul1 = Ul2
   Ul2 = Ut + Ub + Us
-  print('Ul2',Ul2)
+  print('Overall Loss coefficient',Ul2)
 
 
 # Useful heat gain rate of collector
