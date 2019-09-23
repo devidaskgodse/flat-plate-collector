@@ -69,7 +69,7 @@ M = float(input("Enter no. of transperant covers on the surface: ")) # No. of to
 dc = float(input('Enter thickness of one transperant cover in metres: '))
 theta1 = acos(costheta1) # Angle of incidence for beam radiation
 theta2 = asin(sin(theta1) / eta) # Angle of refraction for beam radiation
-K = 15 # Extinction coefficient for glass in per metre
+K = 19 # Extinction coefficient for glass in per metre. #Generally 15 per metre.
 
 # Reflectivity of two components of polarization of beam radiation
 robI = (sin(theta2 - theta1))**2 / (sin(theta2 + theta1))**2 
@@ -165,10 +165,9 @@ flowrate = float(input('Enter flow rate of fluid in kg/s: ')) # fluid flow rate 
 
 Tfi = float(input('Enter inlet temperature of fluid in kelvin: '))
 Ta = float(input('Enter surrounding temperature in kelvin: '))
-N = float(input('Enter no. of tubes in collector: '))
 Do = float(input('Enter outer diameter of tube in metres: ')) # metres
 Di = float(input('Enter inner diameter of tube in metres: ')) # metres
-W = L2 / N # pitch of absorber plate
+W = float(input('Enter tube center-to-center distance in metres: ')) # pitch of absorber plate
 
 wind = float(input('Enter wind speed in m/s: '))
 hw = 8.55 + 2.56 * wind
@@ -210,8 +209,10 @@ print('Useful heat gain rate - ', Qu)
 Tfo = (Qu / (flowrate * Cp)) + Tfi 
 print('Outlet temperature of fluid in Kelvin -  ', Tfo) # Kelvin
 
-# Instantaneous efficiency of collector 
-Ac = Ap * 1.15 # Collector gross area
+# Instantaneous efficiency of collector
+length = float(input('Enter length of collector in metres: '))
+breadth = float(input('Enter breadth of collector in metres: ')) 
+Ac = length * breadth # Collector gross area
 efficiency = Qu / (Ac * It)
 print('Instantaneous efficiency of collector - ', efficiency)
 
