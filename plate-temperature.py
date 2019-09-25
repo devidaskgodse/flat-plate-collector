@@ -1,14 +1,12 @@
-# this file is for making a numerical method to find the value of mean-plate temperature
-#Initial approximation to overall loss coefficient
 import numpy as np
 from datetime import datetime
 from math import *
 
 # constants
-sigma = 5.67 * 10**-8 # W/m^2-K^4
-Cp = 4184 #J/kg-K for water
+sigma = 5.67 * 10**-8 # Stephan boltzmann constant W/m^2-K^4
+Cp = 4184 #for water in J/kg-K
 
-d = pi / 180
+d = pi / 180 # conversion factor for degree to radian
 
 
 # Location Specification
@@ -31,10 +29,6 @@ gamma = d * float(input("Enter surface azimuth angle in degrees: ")) # Surface a
 beta = d * (float(input("Enter tilt angle of surface in degrees: "))) # Tilt of the surface
 
 
-
-
-''' Process'''
-
 Ib = Ig - Id # beam radiation incident on ground in W/m^2
 
 delta = d * (23.45 * sin(360 * (284.0 + n) * d / 365.0)) # declination
@@ -51,18 +45,18 @@ costheta1 = sin(phi) * sin(delta) * cos(beta) + \
            + cos(delta) * sin(gamma) * sin(omega) * sin(beta)
 costhetaz = sin(phi) * sin(delta) + cos(phi) * cos(delta) * cos(omega)
 
-ro = 0.2
+ro = 0.2 # reflection coefficient for ground
 Rb = costheta1 / costhetaz
 Rd = cos(beta * d / 2.0)**2.0
 Rr = ro * sin(beta * d / 2.0)**2.0
 
-''' Solar radiation incident on tilted surface'''
+# Solar radiation incident on tilted surface
 It = Ib * Rb + Id * Rd + Ig * Rr 
 
 print('Solar radiation incident on tilted surface in W/m^2 -  ', It)
 
 
-''' For calculation of incident solar flux absorbed in absorber plate'''
+#calculation of incident solar flux absorbed in absorber plate
 
 eta = float(input("Enter refractive index of cover w. r. t. air: ")) # Refractive Index
 M = float(input("Enter no. of transperant covers on the surface: ")) # No. of top covers
@@ -112,8 +106,6 @@ S = Ib * Rb * TAb + (Id * Rd + Ig * Rr) * TAd
 print('Incident solar flux absorbed in absorber plate in W/m^2 -  ', S)
 
 
-
-
 def Pr(T):
   Pr = 0.7418 - 0.0001373*T #Prandtl number
   return Pr
@@ -142,9 +134,6 @@ def NuL(effRaL):
     NuL = 0.157*(effRaL**0.285)
   return NuL
 
-
-
-
 # Bottom loss coefficient calculation
 Ki = float(input("Enter thermal conductivity of insulator in W/m-K: ")) # W/m-K
 db = float(input("Enter Thickness of insulator at the bottom in m: ")) # in metres
@@ -166,26 +155,31 @@ dp = float(input('Enter thickness of absorber plate in metres: ')) # metres
 hf = float(input('Enter heat transfer coefficient between fluid and tube in W/m^2-K: '))
 flowrate = float(input('Enter flow rate of fluid in kg/s: ')) # fluid flow rate in kg/s
 
-Tfi = float(input('Enter inlet temperature of fluid in kelvin: '))
-Ta = float(input('Enter surrounding temperature in kelvin: '))
+Tfi = float(input('Enter inlet temperature of fluid in kelvin: ')) # Kelvin
+Ta = float(input('Enter surrounding temperature in kelvin: ')) # Kelvin
 Do = float(input('Enter outer diameter of tube in metres: ')) # metres
 Di = float(input('Enter inner diameter of tube in metres: ')) # metres
-W = float(input('Enter tube center-to-center distance in metres: ')) # pitch of absorber plate
+W = float(input('Enter tube center-to-center distance in metres: ')) # pitch of absorber plate in metres
 
-wind = float(input('Enter wind speed in m/s: '))
+wind = float(input('Enter wind speed in m/s: ')) # wind speed in m/s
 hw = 8.55 + 2.56 * wind
 
+# Initial approximations for overall loss coefficient
 Ul1 = 0 # W/m^2-K
-Ul2 = 4
+Ul2 = 4 # W/m^2-K
 
 while np.abs(Ul1 - Ul2) > 0.05:
   m = (Ul2/(Kp*dp))**0.5
+  # plate effectiveness
   phy = (tanh(m * (W - Do) / 2)) / (m * (W - Do) / 2)
-  
+
+  # collector efficiency factor
   fdash = ((W/(Do + phy * (W - Do))) + W*Ul2/(pi * Di * hf))**(-1)
-  
+
+  # collector heat removal factor
   FR = flowrate * Cp * (1 - exp(-1 * fdash * Ul2 * Ap / (flowrate * Cp))) / (Ul2 * Ap)
-  
+
+  # useful heat gain rate of collector
   Qu = FR * Ap * (S - Ul2 * (Tfi - Ta))
   Ql = S*Ap - Qu
 
@@ -204,7 +198,7 @@ while np.abs(Ul1 - Ul2) > 0.05:
   print('Overall Loss coefficient',Ul2)
 
 
-# Useful heat gain rate of collector
+# Final useful heat gain rate of collector
 Qu = FR * Ap * (S - Ul2 * (Tfi - Ta)) # Watt
 print('Useful heat gain rate - ', Qu)
 
@@ -218,4 +212,3 @@ breadth = float(input('Enter breadth of collector in metres: '))
 Ac = length * breadth # Collector gross area
 efficiency = Qu / (Ac * It)
 print('Instantaneous efficiency of collector - ', efficiency)
-
